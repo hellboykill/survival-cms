@@ -1,0 +1,24 @@
+.react-datepicker-popper {
+
+    border-bottom-color: #0000ff;
+    margin-top: -7px;
+    z-index: 9999 !important;
+}
+.inlineBtn {
+    width: 100px;
+    color:darkcyan ;
+    display: "inline-block";
+    padding: '10px'
+}
+.manual {
+    margin-right: 100px;
+}
+.form__form-group-field{
+    margin-left: 50px;
+}
+.form__button-toolbar{
+    margin-left: 120px;
+}
+.inline{
+    margin-left: 300px
+}
