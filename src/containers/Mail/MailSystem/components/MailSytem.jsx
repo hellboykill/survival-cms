@@ -118,7 +118,7 @@ class MailSystem extends PureComponent {
 
   getMailSystem = async () => {
     await axios
-      .get(config.mail_url_test + config.url_mailsytem, {
+      .get(config.mail_url + config.url_mailsytem, {
         params: {
           language: this.state.viewByLanguage,
         },
@@ -244,7 +244,7 @@ class MailSystem extends PureComponent {
         });
         let mail = "";
         axios
-          .post(config.mail_url_test + config.url_mailDetail, {
+          .post(config.mail_url + config.url_mailDetail, {
             mailId: event.target.name,
             mailType: 0, // type = 0 is mail system
           })
@@ -318,7 +318,7 @@ class MailSystem extends PureComponent {
     if (!countryCode.length) countryCode = null;
 
     axios
-      .post(config.mail_url_test + config.url_mailsytem, {
+      .post(config.mail_url + config.url_mailsytem, {
         adminMail: sessionStorage.getItem("userID"),
         passWord: sessionStorage.getItem("passWord"),
         title: this.state.title,
@@ -365,7 +365,7 @@ class MailSystem extends PureComponent {
     }
 
     axios
-      .post(config.mail_url_test + config.url_updateMailSystem, {
+      .post(config.mail_url + config.url_updateMailSystem, {
         mailId: this.state.editMail,
         sender: this.state.sender,
         language: this.state.viewByLanguage,
@@ -393,7 +393,7 @@ class MailSystem extends PureComponent {
   onReloadMailClick = (e) => {
     var msg = "";
     axios
-      .post(config.mail_url_test + config.url_reloadMailData, {
+      .post(config.mail_url + config.url_reloadMailData, {
         adminMail: sessionStorage.getItem("userID"),
         passWord: sessionStorage.getItem("passWord"),
       })
