@@ -1,2 +1,2 @@
-echo "Serving Jackal CMS at port 8080"
-serve -s build -l 8080 -n
+echo "Serving Jackal CMS at port 50000"
+serve -s build -l 50000 -n

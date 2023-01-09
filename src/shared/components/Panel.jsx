@@ -68,7 +68,7 @@ export default class AlertComponent extends PureComponent {
   onRefresh = () => {
     // your async logic here
     this.setState(prevState => ({ refresh: !prevState.refresh }));
-    setTimeout(() => this.setState({ refresh: false }), 8080);
+    setTimeout(() => this.setState({ refresh: false }), 50000);
   };
 
   render() {
