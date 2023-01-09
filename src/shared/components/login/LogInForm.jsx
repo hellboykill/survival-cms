@@ -58,8 +58,8 @@ class LogInForm extends PureComponent {
       if (list_user[this.state.username] === this.state.password) {
         sessionStorage.setItem('userID', this.state.username);
         sessionStorage.setItem('passWord', this.state.password);
-        window.location.replace('http://34.87.155.178:8088/mail/system');
-      //  window.location.replace('http://localhost:8088/mail/system');
+        window.location.replace('http://34.87.155.178:8888/mail/system');
+      //  window.location.replace('http://localhost:8888/mail/system');
       }
     }
   };
