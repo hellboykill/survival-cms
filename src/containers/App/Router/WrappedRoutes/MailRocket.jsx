@@ -7,7 +7,7 @@ import MailReward from '../../../Mail/MailReward';
 export default () => (
   <Switch>
     <Route exact path='/mail/system' component={MailSystem} />
-    <Route exact path='/mail/notifyversion' component={MailNotifyVersion} />
+    <Route exact path='/mail/notify-update' component={MailNotifyVersion} />
     <Route exact path='/mail/reward' component={MailReward} />
   </Switch>
 );

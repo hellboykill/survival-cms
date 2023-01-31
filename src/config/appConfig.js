@@ -3,7 +3,8 @@ export default {
   mail_url_test: "http://localhost:8000/mail",
 
   url_mailsytem: "/mailSystem",
-  url_mailDetail: "/mailDetail",
+  url_mailupdate: "/mailUpdate",
+  url_mailreward: "/mailReward",
 
-  url_updateMailSystem: "/updateMailSystem",
+  url_mailDetail: "/mailDetail",
 };

@@ -23,7 +23,7 @@ class SidebarContent extends Component {
         <ul className='sidebar__block'>
           <SidebarCategory title='Mails' icon='envelope'>
             <SidebarLink title='Mail System' route='/mail/system' onClick={this.hideSidebar} />
-            <SidebarLink title='Mail Notify Version' route='/mail/notifyversion' onClick={this.hideSidebar} />
+            <SidebarLink title='Mail Notify Update' route='/mail/notify-update' onClick={this.hideSidebar} />
             <SidebarLink title='Mail Reward' route='/mail/reward' onClick={this.hideSidebar} />
 
           </SidebarCategory>

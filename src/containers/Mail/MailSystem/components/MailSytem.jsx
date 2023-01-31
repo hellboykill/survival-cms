@@ -20,7 +20,8 @@ import validate from "./../../../Form/FormValidation/components/validate";
 import axios from "axios";
 import Expand from "./../../../../shared/components/Expand";
 import config from "./../../../../config/appConfig";
-import TextareaAutosize from "react-textarea-autosize";
+import TextareaAutosize from "react-textarea-autosize"
+import { LanguageOptions, Platforms, MailType } from "../../Helper";
 
 const getTimezoneOffset = new Date().getTimezoneOffset() * 60000;
 
@@ -59,19 +60,17 @@ const StatusFormatter = (isDeleted, startDate, endDate) => {
     isDeleted === false &&
     new Date(startDate) < new Date() &&
     new Date(endDate) > new Date()
-  ) {
+  )
     return <span className="badge badge-success">Active</span>;
-  } else if (isDeleted === false && new Date(startDate) > new Date()) {
+  if (isDeleted === false && new Date(startDate) > new Date())
     return <span className="badge badge-warning">Coming soon</span>;
-  } else if (
-    isDeleted &&
+  if (
+    isDeleted === true &&
     new Date(startDate) < new Date() &&
     new Date(endDate) > new Date()
-  ) {
+  )
     return <span className="badge badge-danger">Delete</span>;
-  } else {
-    return <span className="badge badge-danger">Expried</span>;
-  }
+  return <span className="badge badge-danger">Expried</span>;
 };
 
 StatusFormatter.propTypes = {
@@ -246,11 +245,11 @@ class MailSystem extends PureComponent {
         axios
           .post(config.mail_url + config.url_mailDetail, {
             mailId: event.target.name,
-            mailType: 0, // type = 0 is mail system
+            mailType: MailType.System,
           })
           .then(function(response) {
             mail = response.data;
-          })
+          })  
           .then(() => {
             console.log(mail);
             if (mail) {
@@ -265,19 +264,6 @@ class MailSystem extends PureComponent {
                   countryCode: mail.countryCode.toString(),
                 });
               }
-
-              // if (mail.gifts) {
-              //   let gifts = mail.gifts;
-              //   let convert = "";
-              //   Object.keys(gifts).forEach((key) => {
-              //     convert = convert.concat(key, ",", gifts[key], ",");
-              //   });
-              //   convert = convert.slice(0, -1);
-              //   this.setState({
-              //     gifts: convert,
-              //   });
-              //   console.log(this.state.gifts)
-              // }
 
               this.setState({
                 platform: mail.platform,
@@ -365,10 +351,10 @@ class MailSystem extends PureComponent {
     }
 
     axios
-      .post(config.mail_url + config.url_updateMailSystem, {
+      .put(config.mail_url + config.url_mailsytem, {
         mailId: this.state.editMail,
-        sender: this.state.sender,
         language: this.state.viewByLanguage,
+        sender: this.state.sender,
         title: this.state.title,
         content: this.state.content,
         countryCode: countryCode,
@@ -412,23 +398,6 @@ class MailSystem extends PureComponent {
   render() {
     const { pristine, reset, submitting } = this.props;
     const { listMailSystem } = this.state;
-
-    const LanguageOptions = [
-      { value: "English", label: "English" },
-      { value: "Vietnamese", label: "Vietnamese" },
-      { value: "Russian", label: "Russian" },
-      { value: "French", label: "French" },
-      { value: "Japanese", label: "Japanese" },
-      { value: "Korean", label: "Korean" },
-      { value: "Thai", label: "Thai" },
-      { value: `Chinese (Traditional)`, label: "Chinese" },
-    ];
-
-    const Platforms = [
-      { value: 2, label: "All" },
-      { value: 0, label: "Android" },
-      { value: 1, label: "IOS" },
-    ];
 
     return (
       <Col md={12} lg={12}>

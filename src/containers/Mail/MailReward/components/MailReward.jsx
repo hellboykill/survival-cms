@@ -22,6 +22,7 @@ import Expand from "../../../../shared/components/Expand";
 import config from "../../../../config/appConfig";
 import TextareaAutosize from "react-textarea-autosize";
 import { stringNull } from "./validate";
+import { LanguageOptions,MailType, TypeReward } from "../../Helper";
 
 const getTimezoneOffset = new Date().getTimezoneOffset() * 60000;
 
@@ -85,8 +86,6 @@ class MailReward extends PureComponent {
       language: "",
       title: "",
       sender: "",
-      bannerUrl: "",
-      link: "",
       content: "",
       gifts: {},
       typeReward: "",
@@ -94,7 +93,6 @@ class MailReward extends PureComponent {
       editMail: "",
       endDate: "",
       isAddMail: false,
-      isAddLanguage: false,
       isEditMail: false,
       isSendMailByUserId: false,
       listMailReward: [],
@@ -110,15 +108,15 @@ class MailReward extends PureComponent {
 
   getMailReward = async () => {
     await axios
-      .post(config.mail_url_test + config.url_getMailReward, {
-        adminMail: sessionStorage.getItem("userID"),
-        passWord: sessionStorage.getItem("passWord"),
-        language: this.state.viewByLanguage,
+      .get(config.mail_url + config.url_mailreward, {
+        params: {
+          language: this.state.viewByLanguage,
+        }
       })
       .then((data) => {
-        if(data.data.Body.data) {
+        if (data.data) {
           this.setState({
-            listMailReward: data.data.Body.data,
+            listMailReward: data.data,
           });
         }
       })
@@ -142,18 +140,6 @@ class MailReward extends PureComponent {
   handleSenderChange(event) {
     this.setState({
       sender: event.target.value,
-    });
-  }
-
-  handleBannerUrlChange(event) {
-    this.setState({
-      bannerUrl: event.target.value,
-    });
-  }
-
-  handleLinkChange(event) {
-    this.setState({
-      link: event.target.value,
     });
   }
 
@@ -229,24 +215,20 @@ class MailReward extends PureComponent {
     this.setState({ disabledSubmit: true });
 
     axios
-      .post(config.mail_url_test + config.url_addRewardMail, {
-        adminMail: sessionStorage.getItem("userID"),
-        passWord: sessionStorage.getItem("passWord"),
+      .post(config.mail_url + config.url_mailreward, {
         sender: this.state.sender,
         title: this.state.title,
         content: this.state.content,
-        bannerUrl: this.state.bannerUrl,
-        link: this.state.link,
         type: this.state.typeReward,
         gifts: this.state.gifts,
         expiryDate: this.state.expiryDate,
       })
       .then(function(response) {
-        console.log(response.data.Body);
-        if (response.data.Status === 1) {
+        console.log(response);
+        if (response.status === 200) {
           msg = "Add Mail Reward Success";
         } else {
-          msg = `Add Mail Err: ${response.data.Body.Err}`;
+          msg = `Add Mail Err: ${response.data}`;
         }
       })
       .then(() => {
@@ -254,32 +236,13 @@ class MailReward extends PureComponent {
         this.setState({
           disabledSubmit: false,
         });
-      });
-  };
+      })
+      .catch((error) => {
+        window.alert(error);
 
-  onAddLanguageClick = (e) => {
-    var msg = "";
-    e.preventDefault();
-    axios
-      .post(config.mail_url_test + config.url_addLanguageMail, {
-        adminMail: sessionStorage.getItem("userID"),
-        passWord: sessionStorage.getItem("passWord"),
-        mailId: this.state.mailId,
-        language: this.state.language,
-        title: this.state.title,
-        content: this.state.content,
-        isSystemMail: false,
-      })
-      .then(function(response) {
-        console.log(response.data.Body);
-        if (response.data.Status === 1) {
-          msg = "Update Mail Success";
-        } else {
-          msg = `Update Mail Err: ${response.data.Body.Err}`;
-        }
-      })
-      .then(() => {
-        window.alert(msg);
+        this.setState({
+          disabledSubmit: false,
+        });
       });
   };
 
@@ -289,22 +252,17 @@ class MailReward extends PureComponent {
         this.state.editMail = event.target.name;
         this.setState({
           isEditMail: true,
-          isAddLanguage: false,
           isAddMail: false,
           isSendMailByUserId: false,
         });
         let mail = "";
         axios
-          .post(config.mail_url_test + config.url_findMail, {
-            adminMail: sessionStorage.getItem("userID"),
-            passWord: sessionStorage.getItem("passWord"),
+          .post(config.mail_url + config.url_mailDetail, {
             mailId: event.target.name,
-            isSystemMail: false,
+            mailType: MailType.Reward,
           })
           .then(function(response) {
-            if (response.data.Status === 1) {
-              mail = response.data.Body;
-            }
+              mail = response.data;
           })
           .then(() => {
             console.log(mail);
@@ -316,10 +274,10 @@ class MailReward extends PureComponent {
                 });
               }
               this.setState({
-                link: mail.link,
-                bannerUrl: mail.bannerUrl,
                 sender: mail.sender,
                 expiryDate: mail.expiryDate,
+                isActive: mail.isDeleted ? "1" : "0",
+
               });
             }
           });
@@ -333,16 +291,12 @@ class MailReward extends PureComponent {
     var msg = "";
     e.preventDefault();
     axios
-      .post(config.mail_url_test + config.url_updateMail, {
-        adminMail: sessionStorage.getItem("userID"),
-        passWord: sessionStorage.getItem("passWord"),
+      .post(config.mail_url + config.url_updateMail, {
         mailId: this.state.editMail,
         sender: this.state.sender,
         language: this.state.viewByLanguage,
         title: this.state.title,
         content: this.state.content,
-        bannerUrl: this.state.bannerUrl,
-        link: this.state.link,
         expiryDate: this.state.expiryDate,
         isActive: this.state.isActive,
         isSystemMail: false,
@@ -379,7 +333,7 @@ class MailReward extends PureComponent {
       window.alert("Check Input");
     } else {
       axios
-        .post(config.mail_url_test + config.url_sendMailById, {
+        .post(config.mail_url + config.url_sendMailById, {
           adminMail: sessionStorage.getItem("userID"),
           passWord: sessionStorage.getItem("passWord"),
           RocketId: this.state.userId,
@@ -407,56 +361,57 @@ class MailReward extends PureComponent {
     const { pristine, reset, submitting } = this.props;
     const { listMailReward } = this.state;
 
-    const LanguageOptions = [
-      { value: "English", label: "English" },
-      { value: "Vietnamese", label: "Vietnamese" },
-      { value: "Russian", label: "Russian" },
-      { value: "Spanish", label: "Spanish" },
-      { value: "French", label: "French" },
-      { value: "Japanese", label: "Japanese" },
-      { value: "Korean", label: "Korean" },
-      { value: "Thai", label: "Thai" },
-      { value: "Arabic", label: "Arabic" },
-      { value: `Chinese (Traditional)`, label: "Chinese" },
-      { value: "Portuguese", label: "Portuguese" },
-      { value: "German", label: "German" },
-      { value: "Italian", label: "Italian" },
-      { value: "Indonesian", label: "Indonesian" },
-      { value: "Turkish", label: "Turkish" },
-    ];
-
-    const TypeReward = [
-   //   { value: 1, label: "PVP" },
-   //   { value: 2, label: "Survival" },
-   //   { value: 3, label: "EscortMode" },
-      { value: 5, label: "SubscribleNormal" },
-      { value: 6, label: "SubscribleVip" },
-    //  { value: 7, label: "Birthday" },
-      { value: 9, label: "WorldBoss_Ranking" },
-      { value: 10, label: "WorldBoss_Kill" },
-      { value: 11, label: "WorldBoss_HP_Special" },
-      { value: 12, label: "Invite Friend" },
-      { value: 13, label: "Inapp Bonus" },
-    ];
-
     return (
       <Col md={12} lg={12} xl={12}>
         <Row>
-          <div style={{ float: "left" }}>
-            <Expand
-              title="Send To User"
-              color="warning"
-              handleClick={() => {
-                this.setState({
-                  isAddMail: false,
-                  isAddLanguage: false,
-                  updateTemplate: false,
-                  isEditMail: false,
-                  isSendMailByUserId: true,
-                });
-              }}
-            />
-          </div>
+          <Card>
+            <CardBody>
+              <form className="form">
+                <Container>
+                  <Row>
+                    <Col md={6} xl={3}>
+                      <Field
+                        name="language"
+                        component={renderSelectField}
+                        options={LanguageOptions}
+                        value={this.state.viewByLanguage}
+                        placeholder="English"
+                        onChange={this.handleViewByLanguageChange.bind(this)}
+                      />
+                    </Col>
+                    <Col md={6} xl={6}></Col>
+                    <Col md={6} xl={3}>
+                      <div style={{ float: "left" }}>
+                        <Expand
+                          title="New"
+                          color="secondary"
+                          handleClick={() => {
+                            this.setState({
+                              isAddMail: true,
+                              isEditMail: false,
+                              isSendMailByUserId: false,
+                            });
+                          }}
+                        />
+                        <Expand
+                          title="Send To User"
+                          color="warning"
+                          handleClick={() => {
+                            this.setState({
+                              isAddMail: false,
+                              updateTemplate: false,
+                              isEditMail: false,
+                              isSendMailByUserId: true,
+                            });
+                          }}
+                        />
+                      </div>
+                    </Col>
+                  </Row>
+                </Container>
+              </form>
+            </CardBody>
+          </Card>
         </Row>
         <Row>
           <Card>
@@ -466,39 +421,6 @@ class MailReward extends PureComponent {
                 <h6 className="subhead">
                   Total Language Supports: {LanguageOptions.length}
                 </h6>
-                <div style={{ float: "right" }}>
-                  <Field
-                    name="language"
-                    component={renderSelectField}
-                    options={LanguageOptions}
-                    value={this.state.viewByLanguage}
-                    onChange={this.handleViewByLanguageChange.bind(this)}
-                  />
-                  <Expand
-                    title="New"
-                    color="secondary"
-                    handleClick={() => {
-                      this.setState({
-                        isAddMail: true,
-                        isAddLanguage: false,
-                        isEditMail: false,
-                        isSendMailByUserId: false,
-                      });
-                    }}
-                  />
-                  <Expand
-                    title="Add language"
-                    color="primary"
-                    handleClick={() => {
-                      this.setState({
-                        isAddMail: false,
-                        isAddLanguage: true,
-                        isEditMail: false,
-                        isSendMailByUserId: false,
-                      });
-                    }}
-                  />
-                </div>
               </div>
               <div className="table">
                 <Table
@@ -605,32 +527,6 @@ class MailReward extends PureComponent {
                     </div>
                   </div>
                   <div className="form__form-group">
-                    <span className="form__form-group-label">Banner Url</span>
-                    <div className="form__form-group-field">
-                      <Field
-                        name="bannerurl"
-                        component={renderField}
-                        type="bannerurl"
-                        value={this.state.bannerUrl}
-                        onChange={this.handleBannerUrlChange.bind(this)}
-                        placeholder="Optional"
-                      />
-                    </div>
-                  </div>
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">Link</span>
-                    <div className="form__form-group-field">
-                      <Field
-                        name="link"
-                        component={renderField}
-                        type="text"
-                        defaultValue="https://www.facebook.com/jackalsquad"
-                        value={this.state.link}
-                        onChange={this.handleLinkChange.bind(this)}
-                      />
-                    </div>
-                  </div>
-                  <div className="form__form-group">
                     <span className="form__form-group-label">Content</span>
                     <div className="form__form-group-field">
                       <TextareaAutosize
@@ -692,90 +588,6 @@ class MailReward extends PureComponent {
             </Card>
           </Row>
         ) : null}
-        {this.state.isAddLanguage ? (
-          <Row>
-            <Card>
-              <CardBody>
-                <div className="card__title">
-                  <h5 className="bold-text">Mail Reward</h5>
-                  <h3 className="page-subhead subhead">
-                    Add Language for Mail Reward
-                  </h3>
-                </div>
-                <form
-                  className="form form--horizontal"
-                  onSubmit={this.onAddLanguageClick}
-                >
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">Mail Id</span>
-                    <div className="form__form-group-field">
-                      <Field
-                        name="mailId"
-                        component={renderField}
-                        type="text"
-                        value={this.state.title}
-                        onChange={this.handleIdChange.bind(this)}
-                      />
-                    </div>
-                  </div>
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">Language</span>
-                    <div className="form__form-group-field">
-                      <Field
-                        name="language"
-                        component={renderSelectField}
-                        options={LanguageOptions}
-                        value={this.state.language}
-                        onChange={this.handleLanguageChange.bind(this)}
-                      />
-                    </div>
-                  </div>
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">Title</span>
-                    <div className="form__form-group-field">
-                      <Field
-                        name="title"
-                        component={renderField}
-                        type="text"
-                        value={this.state.title}
-                        onChange={this.handleTitleChange.bind(this)}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">Content</span>
-                    <div className="form__form-group-field">
-                      <TextareaAutosize
-                        name="content"
-                        component={renderField}
-                        type="text"
-                        value={this.state.content}
-                        onChange={this.handleContentChange.bind(this)}
-                      />
-                    </div>
-                  </div>
-
-                  <ButtonToolbar className="form__button-toolbar">
-                    <Button color="primary" type="submit">
-                      Update
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        reset();
-                        this.setState({ isAddLanguage: false });
-                      }}
-                      disabled={pristine || submitting}
-                    >
-                      Cancel
-                    </Button>
-                  </ButtonToolbar>
-                </form>
-              </CardBody>
-            </Card>
-          </Row>
-        ) : null}
         {this.state.isEditMail ? (
           <Row>
             <Card>
@@ -826,31 +638,6 @@ class MailReward extends PureComponent {
                     </div>
                   </div>
                   <div className="form__form-group">
-                    <span className="form__form-group-label">Banner Url</span>
-                    <div className="form__form-group-field">
-                      <input
-                        name="bannerurl"
-                        component={renderField}
-                        type="text"
-                        value={this.state.bannerUrl}
-                        onChange={this.handleBannerUrlChange.bind(this)}
-                        placeholder="Optional"
-                      />
-                    </div>
-                  </div>
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">Link</span>
-                    <div className="form__form-group-field">
-                      <input
-                        name="link"
-                        component={renderField}
-                        type="text"
-                        value={this.state.link}
-                        onChange={this.handleLinkChange.bind(this)}
-                      />
-                    </div>
-                  </div>
-                  <div className="form__form-group">
                     <span className="form__form-group-label">Expiry Date</span>
                     <div className="form__form-group-field">
                       <input
@@ -875,6 +662,9 @@ class MailReward extends PureComponent {
                           { value: "0", label: "True" },
                           { value: "1", label: "False" },
                         ]}
+                        placeholder={
+                          this.state.isActive == "0" ? "True" : "False"
+                        }
                         onChange={this.handleActiveChange.bind(this)}
                       />
                     </div>
