@@ -2,16 +2,17 @@ import React, { PureComponent } from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import { withTranslation } from 'react-i18next';
 import { connect } from 'react-redux';
-import PropTypes from 'prop-types';
+import PropTypes, { number } from 'prop-types';
 
-import PVPView from './components/PVPView';
+import PVPRemoteConfig from './components/PVPRemoteConfig';
 
 //import PlaceOrder from './components/PlaceOrder';
-import { deleteCryptoTableData } from '../../../redux/actions/cryptoTableActions';
-import { CryptoTableProps } from '../../../shared/prop-types/TablesProps';
-import { ThemeProps, RTLProps } from '../../../shared/prop-types/ReducerProps';
-import config from '../../../config/appConfig';
+import { deleteCryptoTableData } from '../../redux/actions/cryptoTableActions';
+import { CryptoTableProps } from '../../shared/prop-types/TablesProps';
+import { ThemeProps, RTLProps } from '../../shared/prop-types/ReducerProps';
 import axios from 'axios';
+
+import config from '../../config/appConfig';
 
 class CryptoDashboard extends PureComponent {
   static propTypes = {
@@ -25,41 +26,32 @@ class CryptoDashboard extends PureComponent {
   constructor() {
     super();
     this.state = {
-      listPVP: [],
+      timePlay: null,
+      leaderboard: null
     };
   }
   componentDidMount() {
-    var lsPVP = [];
+    var data = null;
     axios
-      .get(config.product_url + config.prefix_pvp + config.url_leaderboard)
+      .get(config.product_url + config.prefix_pvp + config.url_config)
       .then(function(response) {
         if (response.status === 200) {
-          lsPVP = response.data;
+          data = response.data;
+          console.log(data)
         }
       })
       .catch(function(error) {
         console.log(error);
       })
       .then(() => {
-        this.setState({
-            listPVP: lsPVP.map((item) => {
-            let user = {};
-            user.UserId = item.UserId;
-            user.DisplayName = item.PlayerData.DisplayName;
-            user.Score = item.Score;
-            return user;
-          }),
-        });
+        if(data) {
+          this.setState({
+            timePlay: data.TimePlay,
+            leaderboard: data.Leaderboard
+          });
+        }
       });
   }
-
-  onDeleteCryptoTableData = (index, e) => {
-    const { dispatch, cryptoTable } = this.props;
-    e.preventDefault();
-    const arrayCopy = [...cryptoTable];
-    arrayCopy.splice(index, 1);
-    dispatch(deleteCryptoTableData(arrayCopy));
-  };
 
   render() {
 
@@ -67,12 +59,12 @@ class CryptoDashboard extends PureComponent {
       <Container className='dashboard'>
         <Row>
           <Col md={12}>
-            <h3 className='page-title'>Jackal Survival Leaderboard</h3>
+            <h3 className='page-title'>Remote Config PVP</h3>
           </Col>
         </Row>
 
         <Row>
-          <PVPView title='PVP' lsPVP={this.state.listPVP} />
+          <PVPRemoteConfig title='PVP' timePlay={this.state.timePlay}  leaderboard={this.state.leaderboard}/>
   
         </Row>
       </Container>

@@ -1,7 +1,7 @@
 import { AUTHENTICATE, AUTHENTICATE_ERROR_AUTH } from '../actions/authActions';
 
 const initialState = {
-  fullName: 'HuuNB',
+  fullName: sessionStorage.getItem("userName"),
   avatar: '',
 };
 

@@ -21,9 +21,6 @@ const DropDownMore = ({ index, handleDeleteRow,handleViewData }) => (
   </UncontrolledDropdown>
 );
 
-
-
-//export default withTranslation('common')(TradeHistory);
 export default class PVPView extends PureComponent {
   static propTypes = {
     dir: PropTypes.string.isRequired,
@@ -36,26 +33,20 @@ export default class PVPView extends PureComponent {
     };
   }
 
-OnViewUserData = (index,e) =>{
-  window.open(config.cms_url + `/user/getUserData?userID=` + this.props.lsCountryIAP[index].UserId, '_blank');
-}
-
   onDeleteCryptoTableData = (index, e) => {
  
     e.preventDefault();
 
     axios
-    .post(config.base_url + config.url_deleteLeaderBoard, {
-      UserId: this.props.lsCountryIAP[index].UserId,
-      LeaderboardName: 'PVP'
+    .delete(config.product_url + config.prefix_pvp + config.url_leaderboard, {
+      data: {
+        userId: this.props.lsPVP[index].UserId,
+      }
     })
     .then(function(response) {
       if (response.status === 200) {
-        let data = response.data;
-        if (data.status === 'ok') {
           console.log(response.data);
-          this.props.lsCountryIAP.splice(index,1);
-        }
+          this.props.lsPVP.splice(index,1);
       }
     })
     .catch(function(error) {
@@ -68,8 +59,8 @@ OnViewUserData = (index,e) =>{
   
   renderTableData() {
 
-    if (this.props.lsCountryIAP) {
-      return this.props.lsCountryIAP.map((nation,index) => {
+    if (this.props.lsPVP) {
+      return this.props.lsPVP.map((nation,index) => {
         const { UserId, DisplayName, Score } = nation; //destructuring
         return (
           <tr>
@@ -81,7 +72,7 @@ OnViewUserData = (index,e) =>{
             <td key='score'>{Score}</td>
             <td key='dropdown'>
               <DropDownMore index={index} handleDeleteRow={e => this.onDeleteCryptoTableData(index, e)} 
-              handleViewData={e => this.OnViewUserData(index, e)}/> 
+             /> 
               
               {/*  */}
             </td>

@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import SidebarLink from './SidebarLink';
-import SidebarCategory from './SidebarCategory';
+import React, { Component } from "react";
+import PropTypes from "prop-types";
+import SidebarLink from "./SidebarLink";
+import SidebarCategory from "./SidebarCategory";
 
 class SidebarContent extends Component {
   static propTypes = {
@@ -19,17 +19,40 @@ class SidebarContent extends Component {
     // const { changeToLight, changeToDark } = this.props;
 
     return (
-      <div className='sidebar__content'>
-        <ul className='sidebar__block'>
-          <SidebarCategory title='Mails' icon='envelope'>
-            <SidebarLink title='Mail System' route='/mail/system' onClick={this.hideSidebar} />
-            <SidebarLink title='Mail Notify Update' route='/mail/notify-update' onClick={this.hideSidebar} />
-            <SidebarLink title='Mail Reward' route='/mail/reward' onClick={this.hideSidebar} />
-
+      <div className="sidebar__content">
+        <ul className="sidebar__block">
+          <SidebarCategory title="Mails" icon="envelope">
+            <SidebarLink
+              title="Mail System"
+              route="/mail/system"
+              onClick={this.hideSidebar}
+            />
+            <SidebarLink
+              title="Mail Notify Update"
+              route="/mail/notify-update"
+              onClick={this.hideSidebar}
+            />
+            <SidebarLink
+              title="Mail Reward"
+              route="/mail/reward"
+              onClick={this.hideSidebar}
+            />
+          </SidebarCategory>
+          <SidebarCategory title="PVP" icon="list">
+            <SidebarLink
+              title="Leaderboard"
+              route="/pvp/leaderboard"
+              onClick={this.hideSidebar}
+            />
+             <SidebarLink
+              title="Remote Config"
+              route="/pvp/remoteconfig"
+              onClick={this.hideSidebar}
+            />
           </SidebarCategory>
         </ul>
-        <ul className='sidebar__block'>
-          <SidebarLink title='Log Out' icon='exit' route='/log_in' />
+        <ul className="sidebar__block">
+          <SidebarLink title="Log Out" icon="exit" route="/log_in" />
         </ul>
       </div>
     );

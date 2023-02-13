@@ -134,7 +134,7 @@ class MailNotifyVersion extends PureComponent {
 
   getMailUpdate = () => {
     axios
-      .get(config.mail_url + config.url_mailupdate, {
+      .get(config.product_url + config.prefix_mail + config.url_mailupdate, {
         params: {
           language: this.state.viewByLanguage,
         },
@@ -248,7 +248,7 @@ class MailNotifyVersion extends PureComponent {
     });
     let template = "";
     axios
-      .post(config.mail_url + config.url_templateByLanguage, {
+      .post(config.product_url + config.prefix_mail + config.url_templateByLanguage, {
         language: event.value,
       })
       .then(function(response) {
@@ -298,7 +298,7 @@ class MailNotifyVersion extends PureComponent {
         });
         let mail = "";
         axios
-          .post(config.mail_url + config.url_mailDetail, {
+          .post(config.product_url + config.prefix_mail + config.url_mailDetail, {
             mailId: event.target.name,
             mailType: MailType.Update,
           })
@@ -351,7 +351,7 @@ class MailNotifyVersion extends PureComponent {
 
     this.setState({ disabledSubmit: true });
     axios
-      .post(config.mail_url + config.url_mailupdate, {
+      .post(config.product_url + config.prefix_mail + config.url_mailupdate, {
         title: this.state.title,
         content: this.state.content,
         gifts: this.state.gifts,
@@ -402,7 +402,7 @@ class MailNotifyVersion extends PureComponent {
     lsMailId.forEach((id) => {
       if (id) {
         axios
-          .post(config.mail_url + config.url_disableMail, {
+          .post(config.product_url + config.prefix_mail + config.url_disableMail, {
             mailID: id,
             isSystemMail: true,
           })
@@ -415,7 +415,7 @@ class MailNotifyVersion extends PureComponent {
     var msg = "";
     e.preventDefault();
     axios
-      .post(config.mail_url + config.url_updateTemplateReward, {
+      .post(config.product_url + config.prefix_mail + config.url_updateTemplateReward, {
         adminMail: sessionStorage.getItem("userID"),
         passWord: sessionStorage.getItem("passWord"),
         language: this.state.languageTemplate,
@@ -438,7 +438,7 @@ class MailNotifyVersion extends PureComponent {
     var msg = "";
     e.preventDefault();
     axios
-      .put(config.mail_url + config.url_mailupdate, {
+      .put(config.product_url + config.prefix_mail + config.url_mailupdate, {
         mailId: this.state.editMail,
         language: this.state.viewByLanguage,
         title: this.state.title,

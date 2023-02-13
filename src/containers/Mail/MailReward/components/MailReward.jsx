@@ -108,7 +108,7 @@ class MailReward extends PureComponent {
 
   getMailReward = async () => {
     await axios
-      .get(config.mail_url + config.url_mailreward, {
+      .get(config.product_url + config.prefix_mail + config.url_mailreward, {
         params: {
           language: this.state.viewByLanguage,
         }
@@ -215,7 +215,7 @@ class MailReward extends PureComponent {
     this.setState({ disabledSubmit: true });
 
     axios
-      .post(config.mail_url + config.url_mailreward, {
+      .post(config.product_url + config.prefix_mail + config.url_mailreward, {
         sender: this.state.sender,
         title: this.state.title,
         content: this.state.content,
@@ -257,7 +257,7 @@ class MailReward extends PureComponent {
         });
         let mail = "";
         axios
-          .post(config.mail_url + config.url_mailDetail, {
+          .post(config.product_url + config.prefix_mail + config.url_mailDetail, {
             mailId: event.target.name,
             mailType: MailType.Reward,
           })
@@ -291,7 +291,7 @@ class MailReward extends PureComponent {
     var msg = "";
     e.preventDefault();
     axios
-      .post(config.mail_url + config.url_updateMail, {
+      .post(config.product_url + config.prefix_mail + config.url_updateMail, {
         mailId: this.state.editMail,
         sender: this.state.sender,
         language: this.state.viewByLanguage,
@@ -333,7 +333,7 @@ class MailReward extends PureComponent {
       window.alert("Check Input");
     } else {
       axios
-        .post(config.mail_url + config.url_sendMailById, {
+        .post(config.product_url + config.prefix_mail + config.url_sendMailById, {
           adminMail: sessionStorage.getItem("userID"),
           passWord: sessionStorage.getItem("passWord"),
           RocketId: this.state.userId,
