@@ -52,7 +52,6 @@ class Layout extends Component {
   componentDidMount() {
     const { rtl } = this.props;
     NotificationSystem.newInstance({ style: { top: 65 } }, n => notification = n);
-    setTimeout(() => showNotification(rtl.direction), 700);
   }
 
   componentWillUnmount() {

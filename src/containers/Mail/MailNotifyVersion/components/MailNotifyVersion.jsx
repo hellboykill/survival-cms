@@ -22,6 +22,7 @@ import Expand from "./../../../../shared/components/Expand";
 import config from "./../../../../config/appConfig";
 import TextareaAutosize from "react-textarea-autosize";
 import { LanguageOptions, MailType, Platforms } from "../../Helper";
+import setAuthHeader from "../../../../shared/components/auth/authJwt";
 
 const getTimezoneOffset = new Date().getTimezoneOffset() * 60000;
 const renderField = ({
@@ -129,6 +130,7 @@ class MailNotifyVersion extends PureComponent {
   }
 
   componentDidMount() {
+    setAuthHeader();
     this.getMailUpdate();
   }
 

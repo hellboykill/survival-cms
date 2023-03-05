@@ -13,6 +13,7 @@ import { ThemeProps, RTLProps } from '../../shared/prop-types/ReducerProps';
 import axios from 'axios';
 
 import config from '../../config/appConfig';
+import setAuthHeader from '../../shared/components/auth/authJwt';
 
 class CryptoDashboard extends PureComponent {
   static propTypes = {
@@ -32,6 +33,7 @@ class CryptoDashboard extends PureComponent {
   }
   componentDidMount() {
     var data = null;
+    setAuthHeader();
     axios
       .get(config.product_url + config.prefix_pvp + config.url_config)
       .then(function(response) {

@@ -10,6 +10,7 @@ import { Alert, Button } from "reactstrap";
 import renderCheckBoxField from "../form/CheckBox";
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
+import { CustomNotification } from "../../../containers/UI/Notification/components/CustomNotification";
 
 
 class LogInForm extends PureComponent {
@@ -72,9 +73,13 @@ class LogInForm extends PureComponent {
             sessionStorage.setItem("accessToken", data.data.accessToken);
             window.location.replace('http://34.87.155.178:50000/mail/system');
             // window.location.replace("http://localhost:50000/mail/system");
+          } else {
+            new CustomNotification().show("danger", "Error", data.message)
           }
         })
-        .catch((error) => console.log(error));
+        .catch((error) => {
+          console.log(error)
+        });
 
       // if (list_user[this.state.username] === this.state.password) {
       //   sessionStorage.setItem('userID', this.state.username);

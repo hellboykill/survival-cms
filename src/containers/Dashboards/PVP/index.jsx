@@ -12,6 +12,7 @@ import { CryptoTableProps } from '../../../shared/prop-types/TablesProps';
 import { ThemeProps, RTLProps } from '../../../shared/prop-types/ReducerProps';
 import config from '../../../config/appConfig';
 import axios from 'axios';
+import setAuthHeader from '../../../shared/components/auth/authJwt';
 
 class CryptoDashboard extends PureComponent {
   static propTypes = {
@@ -29,6 +30,7 @@ class CryptoDashboard extends PureComponent {
     };
   }
   componentDidMount() {
+    setAuthHeader();
     var lsPVP = [];
     axios
       .get(config.product_url + config.prefix_pvp + config.url_leaderboard)

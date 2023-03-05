@@ -113,11 +113,11 @@ class MailSystem extends PureComponent {
   }
 
   componentDidMount() {
+    setAuthHeader();
     this.getMailSystem();
   }
 
   getMailSystem = async () => {
-    setAuthHeader();
     await axios
       .get(config.product_url + config.prefix_mail + config.url_mailsytem, {
         params: {

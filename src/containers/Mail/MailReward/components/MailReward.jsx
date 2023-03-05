@@ -23,6 +23,7 @@ import config from "../../../../config/appConfig";
 import TextareaAutosize from "react-textarea-autosize";
 import { stringNull } from "./validate";
 import { LanguageOptions,MailType, TypeReward } from "../../Helper";
+import setAuthHeader from "../../../../shared/components/auth/authJwt";
 
 const getTimezoneOffset = new Date().getTimezoneOffset() * 60000;
 
@@ -103,6 +104,7 @@ class MailReward extends PureComponent {
   }
 
   componentDidMount() {
+    setAuthHeader();
     this.getMailReward();
   }
 
