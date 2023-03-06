@@ -35,7 +35,7 @@ class CryptoDashboard extends PureComponent {
     var data = null;
     setAuthHeader();
     axios
-      .get(config.product_url + config.prefix_pvp + config.url_config)
+      .get(config.server_url + config.prefix_pvp + config.url_config)
       .then(function(response) {
         if (response.status === 200) {
           data = response.data;

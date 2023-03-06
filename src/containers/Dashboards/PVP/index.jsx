@@ -33,7 +33,7 @@ class CryptoDashboard extends PureComponent {
     setAuthHeader();
     var lsPVP = [];
     axios
-      .get(config.product_url + config.prefix_pvp + config.url_leaderboard)
+      .get(config.server_url + config.prefix_pvp + config.url_leaderboard)
       .then(function(response) {
         if (response.status === 200) {
           lsPVP = response.data;

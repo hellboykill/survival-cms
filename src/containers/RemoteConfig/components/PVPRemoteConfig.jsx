@@ -122,7 +122,7 @@ class PVPRemoteConfig extends PureComponent {
     if (!this.state.userId || !this.state.score) return;
 
     axios
-      .post(config.product_url + config.prefix_pvp + config.url_leaderboard, {
+      .post(config.server_url + config.prefix_pvp + config.url_leaderboard, {
         userId: this.state.userId,
         score: this.state.score,
       })
@@ -143,7 +143,7 @@ class PVPRemoteConfig extends PureComponent {
     });
 
     axios
-      .patch(config.product_url + config.prefix_pvp + config.url_config, {
+      .patch(config.server_url + config.prefix_pvp + config.url_config, {
           timePlay: this.state.timePlay,
           leaderboard: {
             Season: this.state.season,

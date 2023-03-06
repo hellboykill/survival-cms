@@ -119,7 +119,7 @@ class MailSystem extends PureComponent {
 
   getMailSystem = async () => {
     await axios
-      .get(config.product_url + config.prefix_mail + config.url_mailsytem, {
+      .get(config.server_url + config.prefix_mail + config.url_mailsytem, {
         params: {
           language: this.state.viewByLanguage,
         },
@@ -246,7 +246,7 @@ class MailSystem extends PureComponent {
         });
         let mail = "";
         axios
-          .post(config.product_url + config.prefix_mail + config.url_mailDetail, {
+          .post(config.server_url + config.prefix_mail + config.url_mailDetail, {
             mailId: event.target.name,
             mailType: MailType.System,
           })
@@ -307,7 +307,7 @@ class MailSystem extends PureComponent {
     if (!countryCode.length) countryCode = null;
 
     axios
-      .post(config.product_url + config.prefix_mail + config.url_mailsytem, {
+      .post(config.server_url + config.prefix_mail + config.url_mailsytem, {
         title: this.state.title,
         sender: this.state.sender,
         type: this.state.type,
@@ -352,7 +352,7 @@ class MailSystem extends PureComponent {
     }
 
     axios
-      .put(config.product_url + config.prefix_mail + config.url_mailsytem, {
+      .put(config.server_url + config.prefix_mail + config.url_mailsytem, {
         mailId: this.state.editMail,
         language: this.state.viewByLanguage,
         sender: this.state.sender,
@@ -382,7 +382,7 @@ class MailSystem extends PureComponent {
 
     var msg = "";
     axios
-      .post(config.product_url + config.prefix_mail + config.url_reloadMail)
+      .post(config.server_url + config.prefix_mail + config.url_reloadMail)
       .then(function(response) {
         if (response.data.Status === 1) {
           msg = "Reload Mail Succeed";

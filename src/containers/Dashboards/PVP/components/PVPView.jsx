@@ -38,7 +38,7 @@ export default class PVPView extends PureComponent {
     e.preventDefault();
 
     axios
-    .delete(config.product_url + config.prefix_pvp + config.url_leaderboard, {
+    .delete(config.server_url + config.prefix_pvp + config.url_leaderboard, {
       data: {
         userId: this.props.lsPVP[index].UserId,
       }

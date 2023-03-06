@@ -62,7 +62,7 @@ class LogInForm extends PureComponent {
 
       axios
         .post(
-          appConfig.product_url + appConfig.prefix_user + appConfig.url_login,
+          appConfig.server_url + appConfig.prefix_user + appConfig.url_login,
           user
         )
         .then((response) => {
@@ -71,8 +71,7 @@ class LogInForm extends PureComponent {
             sessionStorage.setItem("userRole", JSON.stringify(data.data.role));
             sessionStorage.setItem("userName", data.data.userName);
             sessionStorage.setItem("accessToken", data.data.accessToken);
-            window.location.replace('http://34.87.155.178:50000/mail/system');
-            // window.location.replace("http://localhost:50000/mail/system");
+            window.location.replace(`http://${appConfig.ip_adress}:${appConfig.port_listener}${appConfig.default_router}`);
           } else {
             new CustomNotification().show("danger", "Error", data.message)
           }
@@ -80,13 +79,6 @@ class LogInForm extends PureComponent {
         .catch((error) => {
           console.log(error)
         });
-
-      // if (list_user[this.state.username] === this.state.password) {
-      //   sessionStorage.setItem('userID', this.state.username);
-      //   sessionStorage.setItem('passWord', this.state.password);
-      // //  window.location.replace('http://34.87.155.178:50000/mail/system');
-      //   window.location.replace('http://localhost:50000/mail/system');
-      // }
     }
   };
 
