@@ -18,6 +18,7 @@ export default {
   url_mailsytem: "/mailSystem",
   url_mailupdate: "/mailUpdate",
   url_mailreward: "/mailReward",
+  url_sendtoUser: "/sendToUser",
 
   url_mailDetail: "/mailDetail",
   

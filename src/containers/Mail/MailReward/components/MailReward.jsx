@@ -334,27 +334,27 @@ class MailReward extends PureComponent {
     ) {
       window.alert("Check Input");
     } else {
+
+      this.setState({ disabledSubmit: true });
       axios
-        .post(config.server_url + config.prefix_mail + config.url_sendMailById, {
-          adminMail: sessionStorage.getItem("userID"),
-          passWord: sessionStorage.getItem("passWord"),
-          RocketId: this.state.userId,
-          TypeReward: 8, // Type reward admin push by user id
-          Title: this.state.title,
-          Content: this.state.content,
-          Gifts: this.state.gifts,
-          EndDate: new Date(this.state.endDate - getTimezoneOffset),
+        .post(config.server_url + config.prefix_mail + config.url_sendtoUser, {
+          userId: this.state.userId,
+          title: this.state.title,
+          content: this.state.content,
+          gifts: this.state.gifts,
+          endDate: new Date(this.state.endDate - getTimezoneOffset),
         })
         .then(function(response) {
-          console.log(response.data.Body);
-          if (response.data.Status === 1) {
-            msg = "Send mail succeed";
-          } else {
-            msg = `Send Mail Err: ${response.data.Body.Err}`;
-          }
-        })
-        .then(() => {
-          window.alert(msg);
+          console.log(response.data);
+          window.alert(response.data);
+          this.setState({
+            disabledSubmit: false,
+          });
+        }).catch(error => {
+         console.log(error.response);
+          this.setState({
+            disabledSubmit: false,
+          });
         });
     }
   };
