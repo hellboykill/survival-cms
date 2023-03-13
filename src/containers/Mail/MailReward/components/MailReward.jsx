@@ -22,8 +22,10 @@ import Expand from "../../../../shared/components/Expand";
 import config from "../../../../config/appConfig";
 import TextareaAutosize from "react-textarea-autosize";
 import { stringNull } from "./validate";
-import { LanguageOptions,MailType, TypeReward } from "../../Helper";
+import { LanguageOptions, MailType, TypeReward } from "../../Helper";
 import setAuthHeader from "../../../../shared/components/auth/authJwt";
+import { CustomNotification } from "../../../UI/Notification/components/CustomNotification";
+import { HandleError } from "../../../HandleError/HandleError";
 
 const getTimezoneOffset = new Date().getTimezoneOffset() * 60000;
 
@@ -113,7 +115,7 @@ class MailReward extends PureComponent {
       .get(config.server_url + config.prefix_mail + config.url_mailreward, {
         params: {
           language: this.state.viewByLanguage,
-        }
+        },
       })
       .then((data) => {
         if (data.data) {
@@ -123,7 +125,7 @@ class MailReward extends PureComponent {
         }
       })
       .catch(function(error) {
-        console.log(error);
+        new HandleError(error);
       });
   };
 
@@ -227,21 +229,19 @@ class MailReward extends PureComponent {
       })
       .then(function(response) {
         console.log(response);
-        if (response.status === 200) {
-          msg = "Add Mail Reward Success";
-        } else {
-          msg = `Add Mail Err: ${response.data}`;
-        }
+        new CustomNotification().show(
+          "success",
+          "Success",
+          "Add Mail Reward Success"
+        );
       })
       .then(() => {
-        window.alert(msg);
         this.setState({
           disabledSubmit: false,
         });
       })
       .catch((error) => {
-        window.alert(error);
-
+        new HandleError(error);
         this.setState({
           disabledSubmit: false,
         });
@@ -259,12 +259,15 @@ class MailReward extends PureComponent {
         });
         let mail = "";
         axios
-          .post(config.server_url + config.prefix_mail + config.url_mailDetail, {
-            mailId: event.target.name,
-            mailType: MailType.Reward,
-          })
+          .post(
+            config.server_url + config.prefix_mail + config.url_mailDetail,
+            {
+              mailId: event.target.name,
+              mailType: MailType.Reward,
+            }
+          )
           .then(function(response) {
-              mail = response.data;
+            mail = response.data;
           })
           .then(() => {
             console.log(mail);
@@ -279,9 +282,11 @@ class MailReward extends PureComponent {
                 sender: mail.sender,
                 expiryDate: mail.expiryDate,
                 isActive: mail.isDeleted ? "1" : "0",
-
               });
             }
+          })
+          .catch((error) => {
+            new HandleError(error);
           });
       } else {
         this.setState({ isEditMail: false });
@@ -290,7 +295,6 @@ class MailReward extends PureComponent {
   }
 
   onUpdateMailClick = (e) => {
-    var msg = "";
     e.preventDefault();
     axios
       .post(config.server_url + config.prefix_mail + config.url_updateMail, {
@@ -303,15 +307,15 @@ class MailReward extends PureComponent {
         isActive: this.state.isActive,
         isSystemMail: false,
       })
-      .then(function(response) {
-        if (response.data.Status === 1) {
-          msg = "Update Mail Success";
-        } else {
-          msg = `Update Mail Err: ${response.data.Body.Err}`;
-        }
+      .then(function(_) {
+        new CustomNotification().show(
+          "success",
+          "Success",
+          "Update Mail Success"
+        );
       })
-      .then(() => {
-        window.alert(msg);
+      .catch((error) => {
+        new HandleError(error);
       });
   };
 
@@ -322,7 +326,6 @@ class MailReward extends PureComponent {
   };
 
   onSendMailToUser = (e) => {
-    var msg = "";
     e.preventDefault();
     if (
       this.validateInput(
@@ -334,7 +337,6 @@ class MailReward extends PureComponent {
     ) {
       window.alert("Check Input");
     } else {
-
       this.setState({ disabledSubmit: true });
       axios
         .post(config.server_url + config.prefix_mail + config.url_sendtoUser, {
@@ -345,13 +347,13 @@ class MailReward extends PureComponent {
           endDate: new Date(this.state.endDate - getTimezoneOffset),
         })
         .then(function(response) {
-          console.log(response.data);
-          window.alert(response.data);
+          new CustomNotification().show("success", "Success", response.data);
           this.setState({
             disabledSubmit: false,
           });
-        }).catch(error => {
-         console.log(error.response);
+        })
+        .catch((error) => {
+          new HandleError(error);
           this.setState({
             disabledSubmit: false,
           });

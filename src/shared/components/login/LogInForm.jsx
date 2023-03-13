@@ -11,6 +11,7 @@ import renderCheckBoxField from "../form/CheckBox";
 import axios from "axios";
 import appConfig from "../../../config/appConfig";
 import { CustomNotification } from "../../../containers/UI/Notification/components/CustomNotification";
+import { HandleError } from "../../../containers/HandleError/HandleError";
 
 
 class LogInForm extends PureComponent {
@@ -77,7 +78,7 @@ class LogInForm extends PureComponent {
           }
         })
         .catch((error) => {
-          console.log(error)
+          new HandleError(error);
         });
     }
   };

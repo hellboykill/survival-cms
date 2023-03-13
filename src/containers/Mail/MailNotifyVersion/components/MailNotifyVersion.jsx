@@ -23,6 +23,8 @@ import config from "./../../../../config/appConfig";
 import TextareaAutosize from "react-textarea-autosize";
 import { LanguageOptions, MailType, Platforms } from "../../Helper";
 import setAuthHeader from "../../../../shared/components/auth/authJwt";
+import { HandleError } from "../../../HandleError/HandleError";
+import { CustomNotification } from "../../../UI/Notification/components/CustomNotification";
 
 const getTimezoneOffset = new Date().getTimezoneOffset() * 60000;
 const renderField = ({
@@ -116,8 +118,6 @@ class MailNotifyVersion extends PureComponent {
       minVersion: 0,
       mailIdActive: {},
       isAddMail: false,
-      isAddLanguage: false,
-      updateTemplate: false,
       isEditMail: false,
       lsAppVersion: [],
       isActive: "",
@@ -168,11 +168,11 @@ class MailNotifyVersion extends PureComponent {
             mailIdActive: lsActive,
             listMailNotifySystem: listMailNotify,
           });
-
           console.log(this.state.mailIdActive);
         }
       })
       .catch(function(error) {
+        new HandleError(error);
         console.log(error);
       });
   };
@@ -262,6 +262,8 @@ class MailNotifyVersion extends PureComponent {
         if (template) {
           this.setState({ title: template.title, content: template.content });
         }
+      }).catch(error => {
+        new HandleError(error);
       });
   }
 
@@ -294,9 +296,7 @@ class MailNotifyVersion extends PureComponent {
         this.state.editMail = event.target.name;
         this.setState({
           isEditMail: true,
-          isAddLanguage: false,
           isAddMail: false,
-          updateTemplate: false,
         });
         let mail = "";
         axios
@@ -329,6 +329,8 @@ class MailNotifyVersion extends PureComponent {
                 version: mail.version,
               });
             }
+          }).catch(error => {
+            new HandleError(error);
           });
       } else {
         this.setState({ isEditMail: false });
@@ -337,7 +339,6 @@ class MailNotifyVersion extends PureComponent {
   }
 
   onCreateMailClick = (e) => {
-    var msg = "";
     let isSuccess = false;
     e.preventDefault();
 
@@ -364,80 +365,23 @@ class MailNotifyVersion extends PureComponent {
         platform: this.state.platform,
       })
       .then(function(response) {
-        if (response.status === 200) {
-          msg = "Add Mail Success";
+          new CustomNotification().show("success", "Success", "Add Mail Success");
           isSuccess = true;
-        } else msg = `Add Mail Err: ${response.data}`;
       })
       .then(() => {
-        window.alert(msg);
-        if (isSuccess) this.disabledMail();
         this.setState({
           disabledSubmit: false,
         });
       })
-      .catch((err) => {
-        window.alert(err);
+      .catch((error) => {
+        new HandleError(error);
         this.setState({
           disabledSubmit: false,
         });
-      });
-  };
-
-  disabledMail() {
-    console.log("disable mail");
-    let lsMailId = [];
-    let lsMail = [
-      this.state.mailIdActive["2"],
-      this.state.mailIdActive["0"],
-      this.state.mailIdActive["1"],
-    ];
-    if (this.state.platform === 2) {
-      lsMail.forEach((index) => {
-        if (index) lsMailId.push(index.id);
-      });
-    } else {
-      if (lsMail[0]) lsMailId.push(lsMail[0].id);
-      if (this.state.mailIdActive[this.state.platform.toString])
-        lsMailId.push(this.state.mailIdActive[this.state.platform.toString].id);
-    }
-    lsMailId.forEach((id) => {
-      if (id) {
-        axios
-          .post(config.server_url + config.prefix_mail + config.url_disableMail, {
-            mailID: id,
-            isSystemMail: true,
-          })
-          .catch((error) => console.log(error));
-      }
-    });
-  }
-
-  onUpdateTemplateClick = (e) => {
-    var msg = "";
-    e.preventDefault();
-    axios
-      .post(config.server_url + config.prefix_mail + config.url_updateTemplateReward, {
-        adminMail: sessionStorage.getItem("userID"),
-        passWord: sessionStorage.getItem("passWord"),
-        language: this.state.languageTemplate,
-        title: this.state.title,
-        content: this.state.content,
-      })
-      .then(function(response) {
-        if (response.data.Status === 1) {
-          msg = "Update template reward success";
-        } else {
-          msg = `Update template reward err: ${response.data.Body.Err}`;
-        }
-      })
-      .then(() => {
-        window.alert(msg);
       });
   };
 
   onUpdateMailClick = (e) => {
-    var msg = "";
     e.preventDefault();
     axios
       .put(config.server_url + config.prefix_mail + config.url_mailupdate, {
@@ -454,14 +398,10 @@ class MailNotifyVersion extends PureComponent {
       })
       .then(function(response) {
         console.log(response);
-        if (response.status === 200) {
-          msg = "Update Mail Success";
-        } else {
-          msg = `Update Mail Err: ${response.data}`;
-        }
+        new CustomNotification().show("success", "Success", "Update Mail Success");
       })
-      .then(() => {
-        window.alert(msg);
+      .catch((error) => {
+        new HandleError(error);
       });
   };
 
@@ -495,8 +435,6 @@ class MailNotifyVersion extends PureComponent {
                         handleClick={() => {
                           this.setState({
                             isAddMail: true,
-                            isAddLanguage: false, 
-                            updateTemplate: false,
                             isEditMail: false,
                           });
                         }}
@@ -739,77 +677,6 @@ class MailNotifyVersion extends PureComponent {
                       onClick={() => {
                         reset();
                         this.setState({ isAddMail: false });
-                      }}
-                      disabled={pristine || submitting}
-                    >
-                      Cancel
-                    </Button>
-                  </ButtonToolbar>
-                </form>
-              </CardBody>
-            </Card>
-          </Row>
-        ) : null}
-        {this.state.updateTemplate ? (
-          <Row>
-            <Card>
-              <CardBody>
-                <div className="card__title">
-                  <h5 className="bold-text">Template Reward</h5>
-                  <h3 className="page-subhead subhead">
-                    Update Language for mail reward update new app version
-                  </h3>
-                </div>
-                <form
-                  className="form form--horizontal"
-                  onSubmit={this.onUpdateTemplateClick}
-                >
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">Language</span>
-                    <div className="form__form-group-field">
-                      <Field
-                        name="language"
-                        component={renderSelectField}
-                        options={LanguageOptions}
-                        value={this.state.languageTemplate}
-                        onChange={this.handleLanguageTemplateChange.bind(this)}
-                      />
-                    </div>
-                  </div>
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">Title</span>
-                    <div className="form__form-group-field">
-                      <input
-                        name="title"
-                        component={renderField}
-                        type="text"
-                        value={this.state.title}
-                        onChange={this.handleTitleChange.bind(this)}
-                      />
-                    </div>
-                  </div>
-                  <div className="form__form-group">
-                    <span className="form__form-group-label">Content</span>
-                    <div className="form__form-group-field">
-                      <TextareaAutosize
-                        name="content"
-                        component={renderField}
-                        type="text"
-                        value={this.state.content}
-                        onChange={this.handleContentChange.bind(this)}
-                      />
-                    </div>
-                  </div>
-
-                  <ButtonToolbar className="form__button-toolbar">
-                    <Button color="primary" type="submit">
-                      Update
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={() => {
-                        reset();
-                        this.setState({ updateTemplate: false });
                       }}
                       disabled={pristine || submitting}
                     >

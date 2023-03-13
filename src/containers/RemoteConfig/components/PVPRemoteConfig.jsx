@@ -21,6 +21,8 @@ import renderSelectField from "../../../shared/components/form/Select";
 import { Field, reduxForm } from "redux-form";
 import classnames from "classnames";
 import renderDateTimePickerField from "../../../shared/components/form/DateTimePicker";
+import { CustomNotification } from "../../UI/Notification/components/CustomNotification";
+import { HandleError } from "../../HandleError/HandleError";
 
 const renderField = ({
   input,
@@ -126,10 +128,12 @@ class PVPRemoteConfig extends PureComponent {
         userId: this.state.userId,
         score: this.state.score,
       })
-      .then((rs) => console.log(rs.data))
+      .then((rs) =>  {
+        console.log(rs.data) 
+        new CustomNotification().show("success", "Success", "Set Battle Point Succeess");
+      })
       .catch((error) => {
-        console.log(error);
-        console.log(error.response.status);
+        new HandleError(error);
       });
   };
 
@@ -152,8 +156,12 @@ class PVPRemoteConfig extends PureComponent {
             NextSeason: new Date(this.state.nextSeason),
           },
       })
-      .then((rs) => console.log(rs.data))
+      .then((rs) =>  {
+        console.log(rs.data) 
+        new CustomNotification().show("success", "Success", "Set pvp config succeed");
+      })
       .catch((error) => {
+        new HandleError(error);
         console.log(error);
       });
   };

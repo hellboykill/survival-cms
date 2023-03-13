@@ -13,6 +13,8 @@ import { Link } from "react-router-dom";
 import DotsHorizontalIcon from "mdi-react/DotsHorizontalIcon";
 import axios from "axios";
 import config from "../../../../config/appConfig";
+import { HandleError } from "../../../HandleError/HandleError";
+import { CustomNotification } from "../../../UI/Notification/components/CustomNotification";
 
 const DropDownMore = ({ index, handleDeleteRow, handleViewData }) => (
   <UncontrolledDropdown className="dashboard__table-more">
@@ -54,9 +56,10 @@ export default class PVPView extends PureComponent {
           },
         }
       );
-      console.log(response.data);
       this.props.lsPVP.splice(index,1);
+      new CustomNotification().show("success", "Success", "Remove user leaderboard succeed");
     } catch (error) {
+      new HandleError(error);
       console.log(error);
     }
   };

@@ -23,6 +23,8 @@ import config from "./../../../../config/appConfig";
 import TextareaAutosize from "react-textarea-autosize"
 import { LanguageOptions, Platforms, MailType } from "../../Helper";
 import setAuthHeader from "../../../../shared/components/auth/authJwt";
+import { HandleError } from "../../../HandleError/HandleError";
+import { CustomNotification } from "../../../UI/Notification/components/CustomNotification";
 
 const getTimezoneOffset = new Date().getTimezoneOffset() * 60000;
 
@@ -140,6 +142,7 @@ class MailSystem extends PureComponent {
         console.log("list mail system", this.state.listMailSystem);
       })
       .catch(function(error) {
+        new HandleError(error);
         console.log(error);
       });
     
@@ -281,15 +284,18 @@ class MailSystem extends PureComponent {
               });
             }
           })
-          .catch((error) => console.log(error));
+          .catch((error) => {
+            new HandleError(error);
+            console.log(error)
+          });
       } else {
+        
         this.setState({ isEditMail: false });
       }
     }
   }
 
   onCreateMail = (e) => {
-    var msg = "";
     e.preventDefault();
 
     if (this.state.type === 1 && this.state.gifts !== "") {
@@ -318,22 +324,16 @@ class MailSystem extends PureComponent {
         startDate: new Date(this.state.startDate - getTimezoneOffset),
         endDate: new Date(this.state.endDate - getTimezoneOffset),
       })
-      .then(function(response) {
-        if (response.status === 200) {
-          msg = "Add Mail Success";
-        } else {
-          msg = `Add Mail Err: ${response.data}`;
-        }
+      .then(function(_) {
+          new CustomNotification().show("success", "Success", "Add Mail Success");
       })
       .then(() => {
-        window.alert(msg);
         this.setState({
           disabledSubmit: false,
         });
       })
       .catch((error) => {
-        window.alert(error);
-
+        new HandleError(error);
         this.setState({
           disabledSubmit: false,
         });
@@ -366,32 +366,22 @@ class MailSystem extends PureComponent {
       })
       .then(function(response) {
         console.log(response);
-        if (response.status === 200) {
-          msg = "Update Mail Success";
-        } else {
-          msg = `Update Mail Err: ${response.data}`;
-        }
+        new CustomNotification().show("success", "Success", "Update Mail Success");
       })
-      .then(() => {
-        window.alert(msg);
+      .catch((error) => {
+        new HandleError(error);
       });
   };
 
   onReloadMailClick = (e) => {
     if(e) e.preventDefault();
-
-    var msg = "";
     axios
       .post(config.server_url + config.prefix_mail + config.url_reloadMail)
       .then(function(response) {
-        if (response.data.Status === 1) {
-          msg = "Reload Mail Succeed";
-        } else {
-          msg = `Reload Mail Err: ${response.data.Body}`;
-        }
+          new CustomNotification().show("success", "Success", "Reload Mail Config Success");
       })
-      .then(() => {
-        window.alert(msg);
+      .catch(error => {
+        new HandleError(error);
       });
   };
 
